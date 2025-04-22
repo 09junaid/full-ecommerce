@@ -48,6 +48,13 @@ app.use("/api/v1/contact", contactRoute);
 // });
 
 // @ start server
+
+app.get("/",(req,res)=>{
+  res.send({
+    activeStatus:true,
+    error:false,
+  })
+})
 const start = async () => {
   try {
     await connectDB();

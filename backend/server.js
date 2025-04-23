@@ -10,16 +10,14 @@ import contactRoute from "./routes/contactRoute.js";
 import orderRoute from "./routes/orderRoutes.js";
 import cors from "cors";
 import bodyParser from "body-parser";
+import serverless from "serverless-http"; // 🔥 New
 
-
-// @ config
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 8080;
 
 // @ middleware
 app.use(cors({
-  origin: "http://localhost:5173", // for Vite
+  origin: "http://localhost:5173",
   credentials: true,
 }));
 app.use(bodyParser.json());
@@ -33,22 +31,15 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/contact", contactRoute);
 
-
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
   res.send({
-    activeStatus:true,
-    error:false,
-  })
-})
-const start = async () => {
-  try {
-    await connectDB();
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port:: ${PORT}`.bgCyan.white);
-    });
-  } catch (error) {
-    console.log("❌ Error starting server:", error);
-  }
-};
+    activeStatus: true,
+    error: false,
+  });
+});
 
-start();
+// 🟡 Remove app.listen()
+// 🔁 Instead: connect DB and export the app for serverless
+connectDB();
+
+export const handler = serverless(app); // 🔥 Export as serverless function

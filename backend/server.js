@@ -11,20 +11,21 @@ import orderRoute from "./routes/orderRoutes.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 
+
+// @ config
 dotenv.config();
-await connectDB(); // ✅ Vercel mein await top-level pe allowed hai (ESM only)
-
 const app = express();
+const PORT = process.env.PORT || 8080;
 
-// Middleware
+// @ middleware
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "http://localhost:5173", // for Vite
   credentials: true,
 }));
 app.use(bodyParser.json());
 app.use(express.json());
 
-// Routes
+// @ routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/category", catagoryRoute);
 app.use("/api/v1/product", productRoute);
@@ -32,10 +33,22 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/contact", contactRoute);
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send({ activeStatus: true, error: false });
-});
 
-// ✅ Export App for Vercel
-export default app;
+app.get("/",(req,res)=>{
+  res.send({
+    activeStatus:true,
+    error:false,
+  })
+})
+const start = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on port:: ${PORT}`.bgCyan.white);
+    });
+  } catch (error) {
+    console.log("❌ Error starting server:", error);
+  }
+};
+
+start();

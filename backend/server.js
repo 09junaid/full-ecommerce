@@ -10,7 +10,7 @@ import contactRoute from "./routes/contactRoute.js";
 import orderRoute from "./routes/orderRoutes.js";
 import cors from "cors";
 import bodyParser from "body-parser";
-import serverless from "serverless-http"; // 🔥 New
+// import serverless from "serverless-http"; // 🔥 New
 
 dotenv.config();
 const app = express();
@@ -38,8 +38,16 @@ app.get("/", (req, res) => {
   });
 });
 
-// 🟡 Remove app.listen()
-// 🔁 Instead: connect DB and export the app for serverless
-connectDB();
-
-export const handler = serverless(app); // 🔥 Export as serverless function
+const start=async()=>{
+  try {
+    await connectDB();
+    app.listen(process.env.PORT, () => {
+      console.log(
+        `Server is running on port ${process.env.PORT}`.bgCyan.white
+      );
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+start();
